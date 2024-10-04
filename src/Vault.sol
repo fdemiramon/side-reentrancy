@@ -1,26 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-import {console} from "forge-std/console.sol";
 
 contract Vault {
     mapping(address => uint256) public balances;
 
-
+    /**
+     * @dev Deposits funds into the vault.
+     */
     function deposit() public payable {
         balances[msg.sender] += msg.value;
     }
 
+    /**
+     * @dev Withdraws funds from the vault.
+     * @param _amount The amount of funds to withdraw.
+     */
     function withdraw(uint256 _amount) public {
-        require(balances[msg.sender] >= _amount, "Insufficient funds");
-
-        (bool success, ) = msg.sender.call{value: _amount}("");
-        if (success) {
-                        _amount;
-                    }
-        require(success, "Transfer failed");
         balances[msg.sender] -= _amount;
-        console.logString("Balance in vulnerable contract");
-        console.log(balances[msg.sender]);
+        (bool success, ) = msg.sender.call{value: _amount}("");
+        require(success, "Transfer failed");
+    }
 
+    /**
+     * @dev Flash loans funds from the vault.
+     * @param _amount The amount of funds to flash loan.
+     */
+    function flashLoan(uint256 _amount) public {
+        uint256 previousBalance = address(this).balance;
+        (bool success, ) = msg.sender.call{value: _amount}("");
+        require(success, "Transfer failed");
+        require(previousBalance <= address(this).balance, "Flash loan failed");
     }
 }
