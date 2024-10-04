@@ -17,7 +17,7 @@ contract Vault {
      */
     function withdraw(uint256 _amount) public {
         balances[msg.sender] -= _amount;
-        (bool success, ) = msg.sender.call{value: _amount}("");
+        (bool success,) = msg.sender.call{value: _amount}("");
         require(success, "Transfer failed");
     }
 
@@ -27,7 +27,7 @@ contract Vault {
      */
     function flashLoan(uint256 _amount) public {
         uint256 previousBalance = address(this).balance;
-        (bool success, ) = msg.sender.call{value: _amount}("");
+        (bool success,) = msg.sender.call{value: _amount}("");
         require(success, "Transfer failed");
         require(previousBalance <= address(this).balance, "Flash loan failed");
     }

